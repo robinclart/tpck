@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.expand_path("../../lib", __FILE__)
+require "tpck"
+
+file_or_dir = Pathname.new(ARGV.first)
+
+unless file_or_dir.exist?
+  puts "#{pathname} do not exist"
+  exit(1)
+end
+
+if file_or_dir.directory?
+  begin
+    dir = Tpck::Directory.new(file_or_dir)
+    dir.pack
+  rescue Tpck::Error
+    puts "Could not read directory"
+    exit(1)
+  end
+else
+  begin
+    package = Tpck::Package.read(file_or_dir)
+    package.unpack
+  rescue Tpck::Error
+    puts "Could not read package"
+    exit(1)
+  end
+end
+
+exit(0)
