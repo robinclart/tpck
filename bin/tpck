@@ -11,21 +11,11 @@ unless file_or_dir.exist?
 end
 
 if file_or_dir.directory?
-  begin
-    dir = Tpck::Directory.new(file_or_dir)
-    dir.pack
-  rescue Tpck::Error
-    puts "Could not read directory"
-    exit(1)
-  end
+  theme = Tpck::Theme.new(file_or_dir)
+  theme.pack
 else
-  begin
-    package = Tpck::Package.read(file_or_dir)
-    package.unpack
-  rescue Tpck::Error
-    puts "Could not read package"
-    exit(1)
-  end
+  package = Tpck::Package.open(file_or_dir)
+  package.unpack
 end
 
 exit(0)
