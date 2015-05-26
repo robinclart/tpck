@@ -22,6 +22,10 @@ module Tpck
       @attributes["encoded_body"]
     end
 
+    def mtime
+      @attributes["mtime"]
+    end
+
     def body
       Util.decode(@attributes["encoded_body"])
     end
@@ -32,7 +36,8 @@ module Tpck
       Asset.new({
         "path" => path,
         "encoded_body" => Util.encode(body),
-        "hexdigest" => Util.hexdigest(path)
+        "hexdigest" => Util.hexdigest(path),
+        "mtime" => File.mtime(path),
       })
     end
 
@@ -40,7 +45,8 @@ module Tpck
       {
         "path" => path,
         "encoded_body" => encoded_body,
-        "hexdigest" => hexdigest
+        "hexdigest" => hexdigest,
+        "mtime" => mtime,
       }
     end
   end

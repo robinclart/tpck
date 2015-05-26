@@ -31,9 +31,14 @@ This will recreate the original examples directory.
 If you're receiving the package file inside a web app you can use the library directly without calling the binary. You can then say write the files to s3.
 
 ```
-package = Tpck::Package.new(response)
-files = packages.decode
+package = Tpck::Package.open(io)
+packages.assets.each do |asset|
+  write_to_bucket asset.path, asset.body
+end
 ```
+
+You can use `Tpck::Reader.new(io)` if the content is still gzipped. You can then pass it to `Tpck::Package`. Note that both `Tpck::Package.new(io)` and
+`Tpck::Reader.new(io)` requires an IO like object.
 
 ## Dependencies
 

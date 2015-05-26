@@ -1,5 +1,4 @@
 require "base64"
-require "json"
 require "openssl"
 
 module Util
@@ -11,14 +10,6 @@ module Util
 
   def decode(src)
     Base64.decode64(src)
-  end
-
-  def write_json(src, io)
-    JSON.dump(src, io)
-  end
-
-  def read_json(io)
-    JSON.load(io)
   end
 
   def hexdigest(path)

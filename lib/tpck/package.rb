@@ -1,10 +1,10 @@
 require "fileutils"
+require "json"
+require "zlib"
 
 require "tpck/util"
 require "tpck/asset"
 require "tpck/error"
-require "tpck/reader"
-require "tpck/writer"
 
 module Tpck
   class Package
@@ -13,22 +13,21 @@ module Tpck
       @data = data
     end
 
-    def self.open(path, mode = :reader)
-      wr = case mode
-      when :reader then Reader.open(path)
-      when :writer then Writer.open(path)
-      else
-        raise Error
+    def self.open(path, mode)
+      rw = case mode
+      when :writer then Zlib::GzipWriter.open(path)
+      when :reader then Zlib::GzipReader.open(path)
+      else raise Error
       end
 
-      package = Package.new(wr)
+      package = Package.new(rw)
 
       if block_given?
         yield package
         package.close unless package.closed?
       end
 
-      Package.new(wr)
+      package
     end
 
     def close
@@ -40,19 +39,11 @@ module Tpck
     end
 
     def read
-      @data ||= begin
-        @io.rewind
-        data = Util.read_json(@io)
-        @io.close
-        data
-      end
+      JSON.parse(@io.read)
     end
 
     def write(data = {})
-      @data ||= data
-      Util.write_json(@data, @io)
-      @io.close
-      @data
+      @io.write(JSON.generate(data))
     end
 
     def assets
