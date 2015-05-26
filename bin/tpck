@@ -15,8 +15,7 @@ if file_or_dir.directory?
   theme.pack
 else
   Tpck::Package.open(file_or_dir, :reader) do |p|
-    data = p.read
-    puts data["assets"]
+    p.unpack
   end
 end
 

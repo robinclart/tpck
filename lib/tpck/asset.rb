@@ -1,3 +1,5 @@
+require "mime/types"
+
 require "tpck/util"
 
 module Tpck
@@ -26,6 +28,10 @@ module Tpck
       @attributes["mtime"]
     end
 
+    def mime_type
+      @attributes["mime_type"]
+    end
+
     def body
       Util.decode(@attributes["encoded_body"])
     end
@@ -38,6 +44,7 @@ module Tpck
         "encoded_body" => Util.encode(body),
         "hexdigest" => Util.hexdigest(path),
         "mtime" => File.mtime(path),
+        "mime_type" => MIME::Types.type_for(path).first.to_s,
       })
     end
 
@@ -47,6 +54,7 @@ module Tpck
         "encoded_body" => encoded_body,
         "hexdigest" => hexdigest,
         "mtime" => mtime,
+        "mime_type" => mime_type,
       }
     end
   end
