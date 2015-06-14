@@ -8,9 +8,8 @@ require "tpck/error"
 
 module Tpck
   class Package
-    def initialize(io, data = nil)
+    def initialize(io)
       @io = io
-      @data = data
     end
 
     def self.open(path, mode)
@@ -44,19 +43,6 @@ module Tpck
 
     def write(data = {})
       @io.write(JSON.generate(data))
-    end
-
-    def assets
-      @assets ||= read["assets"].map { |a| Asset.new(a) }
-    end
-
-    def unpack
-      assets.each do |asset|
-        FileUtils.mkdir_p(asset.dirname)
-        File.open(asset.path, "w+") do |f|
-          f.write asset.body
-        end
-      end
     end
   end
 end

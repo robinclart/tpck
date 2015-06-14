@@ -11,10 +11,10 @@ unless file_or_dir.exist?
 end
 
 if file_or_dir.directory?
-  theme = Tpck::Theme.new(file_or_dir)
+  theme = Tpck::Theme.open(file_or_dir)
   theme.pack
 else
-  Tpck::Package.open(file_or_dir, :reader) do |p|
+  Tpck::Package.open(file_or_dir) do |p|
     p.unpack
   end
 end

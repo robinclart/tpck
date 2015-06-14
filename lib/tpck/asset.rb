@@ -37,7 +37,7 @@ module Tpck
     end
 
     def self.open(path)
-      body = File.read(path)
+      body = File.binread(path)
 
       Asset.new({
         "path" => path,

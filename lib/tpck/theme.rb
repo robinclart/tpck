@@ -6,28 +6,35 @@ require "tpck/package"
 
 module Tpck
   class Theme
-    def initialize(path)
-      @dir = Pathname.new(path.to_s)
-      raise Error unless @dir.directory?
+    def initialize(dir, assets)
+      @dir = dir
+      @assets = assets
     end
 
-    def glob
-      Dir.glob(@dir.join("**", "*.*"))
-    end
-
-    def assets
-      @assets ||= glob.map { |p| Asset.open(p) }
-    end
-
-    def to_h
-      {
-        "assets" => assets.map(&:to_h)
-      }
+    def self.open(path)
+      if File.extname(path) == "tpck"
+        package = Package.open(path, :reader)
+        asset = package.read["assets"].map { |a| Asset.new(a) }
+        new(File.basename(path), assets)
+      else
+        dir = Pathname.new(path.to_s)
+        assets = Dir.glob(dir.join("**", "*.*")).map { |p| Asset.open(p) }
+        new(dir, assets)
+      end
     end
 
     def pack
       Package.open "#{@dir}.tpck", :writer do |p|
-        p.write(to_h)
+        p.write({ "assets" => @assets.map(&:to_h) })
+      end
+    end
+
+    def unpack
+      @assets.each do |asset|
+        FileUtils.mkdir_p(asset.dirname)
+        File.open(asset.path, "wb") do |f|
+          f.write asset.body
+        end
       end
     end
   end
