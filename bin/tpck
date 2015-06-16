@@ -10,13 +10,12 @@ unless file_or_dir.exist?
   exit(1)
 end
 
+theme = Tpck::Theme.open(file_or_dir)
+
 if file_or_dir.directory?
-  theme = Tpck::Theme.open(file_or_dir)
   theme.pack
 else
-  Tpck::Package.open(file_or_dir) do |p|
-    p.unpack
-  end
+  theme.unpack
 end
 
 exit(0)

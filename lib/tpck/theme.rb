@@ -12,9 +12,9 @@ module Tpck
     end
 
     def self.open(path)
-      if File.extname(path) == "tpck"
+      if File.extname(path) == ".tpck"
         package = Package.open(path, :reader)
-        asset = package.read["assets"].map { |a| Asset.new(a) }
+        assets = package.read["assets"].map { |a| Asset.new(a) }
         new(File.basename(path), assets)
       else
         dir = Pathname.new(path.to_s)
